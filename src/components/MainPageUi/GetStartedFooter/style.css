@@ -23,3 +23,19 @@
     align-items: center;
     justify-content: center
 }
+
+
+.left-arrow {
+    width: 40;
+    height: 40;
+    margin-left: -20px;
+    border: 2px solid rgb(163, 163, 163, 0.5)
+}
+
+.right-arrow {
+    width: 40;
+    height: 40;
+    margin-right: -20px;
+    border: 2px solid rgb(163, 163, 163, 0.5);
+    rotate: 180deg
+}

@@ -317,3 +317,32 @@ export async function setEncodedPaths(travelData: TravelFormData) {
 
   return updatedTravelPoints;
 }
+
+
+export function generateDateArray(selectedDate: string) {
+  const result = [];
+  const daysBefore = 3;
+  const daysAfter = 3;
+
+  // Convert the selected date to a JavaScript Date object
+  const selectedDateObj = new Date(selectedDate);
+
+  // Generate dates before the selected date
+  for (let i = daysBefore; i > 0; i--) {
+    const currentDate = new Date(selectedDateObj);
+    currentDate.setDate(selectedDateObj.getDate() - i);
+    result.push(currentDate.toISOString().split('T')[0]); // Push the date in 'YYYY-MM-DD' format
+  }
+
+  // Push the selected date
+  result.push(selectedDateObj.toISOString().split('T')[0]);
+
+  // Generate dates after the selected date
+  for (let i = 1; i <= daysAfter; i++) {
+    const currentDate = new Date(selectedDateObj);
+    currentDate.setDate(selectedDateObj.getDate() + i);
+    result.push(currentDate.toISOString().split('T')[0]); // Push the date in 'YYYY-MM-DD' format
+  }
+
+  return result;
+}

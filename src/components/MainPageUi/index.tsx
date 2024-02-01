@@ -9,11 +9,12 @@ import { Alert, Slide, Snackbar } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import type MuiTheme from '~/styles/theme/MuiTheme';
 import { useSelector } from '~/redux/reducers';
-import MapView from './MapWelcome';
+import CalenderView from './CalenderView';
 import GetStartedFooter from './GetStartedFooter';
+import { FaShare } from "react-icons/fa6";
 
 
-const useStyles = makeStyles((theme: typeof MuiTheme) => ({ 
+const useStyles = makeStyles((theme: typeof MuiTheme) => ({
 
   dialog: {
     maxWidth: '400px',
@@ -41,8 +42,8 @@ const useStyles = makeStyles((theme: typeof MuiTheme) => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    padding:'10px',
-    gap: '15px', 
+    padding: '10px',
+    gap: '15px',
   },
   dialogButton: {
     textTransform: 'none',
@@ -63,15 +64,15 @@ const useStyles = makeStyles((theme: typeof MuiTheme) => ({
     color: '#000',
     marginBottom: '10px',
   },
-[theme.breakpoints.between(150,450)]:{
-  dialogCancelButton: {  
-    width: '100%',
-  },
-  dialogConfirmButton: {
-    
-    width: '100%',
-  },
-}
+  [theme.breakpoints.between(150, 450)]: {
+    dialogCancelButton: {
+      width: '100%',
+    },
+    dialogConfirmButton: {
+
+      width: '100%',
+    },
+  }
 }));
 
 
@@ -83,7 +84,7 @@ export default function MainPageUi() {
     success: true,
     message: '',
   });
-  
+  const [calenderView, setCalenderView] = useState<Boolean>(false)
 
   const handleClose = (
     event?: React.SyntheticEvent | Event,
@@ -103,16 +104,16 @@ export default function MainPageUi() {
   return (
     <>
       <Navbar />
-      <MapView></MapView>
+      {calenderView && <CalenderView />}
       <FeedbackPopup
         setOpenSnackbar={setOpenSnackbar}
         feedbackResult={feedbackResult}
         setFeedbackResult={setFeedbackResult}
       />
-      
-       { travelArray.length > 0 ? <GetStartedFooter />:  
-      <FloatingActionButtons />
-      
+
+      {travelArray.length > 0 ? <GetStartedFooter setCalenderView={setCalenderView} /> :
+        <FloatingActionButtons />
+
       }
       <ControlsSpace />
       <AnimationView isVideoPopupMap={true} />

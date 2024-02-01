@@ -41,7 +41,8 @@ import {
   // setUserIDFromTokenStorage,
 } from '~/utility/utils';
 import { useNavigate } from 'react-router-dom';
-import MapView from '../MainPageUi/MapWelcome';
+import { FaShare } from 'react-icons/fa6';
+// import MapView from '../MainPageUi/CalenderView';
 
 interface AnimationViewProps {
   isVideoPopupMap: boolean;
@@ -460,6 +461,13 @@ const AnimationView = (props: AnimationViewProps) => {
 
   return (
     <div className="body" style={{ position: 'relative' }} ref={htmlCanvas}>
+
+      <div style={{position: 'relative', zIndex: 999}}>
+        <div className="music-bottom" style={{position: 'absolute',top: 60, right: 100, cursor: 'pointer'}}>
+          <FaShare color="white" size={25} />
+        </div>
+      </div>
+
       {loading && (
         <div className={classes.loadingScreen}>
           <CircularProgress size={40} thickness={4} />
@@ -495,7 +503,7 @@ const AnimationView = (props: AnimationViewProps) => {
           </div>
           {fullscreenMode ? (
             <div>
-              <MapView />
+              {/* <MapView /> */}
               <AttributionControl placement={true}></AttributionControl>
 
             </div>
