@@ -1,19 +1,16 @@
 import React, { useRef, useState, useEffect } from 'react';
 import maplibregl, { LngLatBounds, LngLatLike, Marker } from 'maplibre-gl';
-import FrameRateControl from './frameControl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './style.css';
 import useStyles from './styles';
 import mapStyles from './mapStyles';
 import { useSelector } from '~/redux/reducers';
 import ActionsCreator from '~/redux/actions';
-import { Loader } from '@googlemaps/js-api-loader';
-
+import watereffect from './waterEffect'
 import {
   AnimationController,
   IAnimationUIConfig,
 } from '~animation_engine/AnimationController';
-import Stats from 'stats.js';
 import { TravelFormData, FormData, DirectionsInput } from '~/utility/models';
 import PointScheduleFormContainer from '~/containers/PointScheduleFormContainer';
 
@@ -30,14 +27,12 @@ import {
 } from '@mui/material';
 import { StaticTravelVisualizer } from '~/animation_engine/StaticTravelVisualizer';
 import { TravelAnimation } from '~/animation_engine/TravelAnimation';
-import ResourceLoader from '~/animation_engine/ResourceLoader';
-import { PlaneModels, CarModels } from '~/animation_engine/utility/enums';
 
 import AttributionControl from '../AttributionControl';
-import RouteGenerator from '~/managers/RouteGenerator';
+
 import {
   loadHDRI,
-  pathDecoder,
+
   // setUserIDFromTokenStorage,
 } from '~/utility/utils';
 import { useNavigate } from 'react-router-dom';
@@ -116,7 +111,7 @@ const AnimationView = (props: AnimationViewProps) => {
     (state: any) => state.MapReducers.mapStyleIndex,
   );
   const logoContainer = useRef(null);
-
+  const water = watereffect()
   // Canvas recodring variables
   const captureStreamRef = useRef();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 600); // Detect initial screen width
@@ -235,7 +230,8 @@ const AnimationView = (props: AnimationViewProps) => {
       map.current = new maplibregl.Map({
         container: mapContainer.current as HTMLElement,
         attributionControl: false,
-        style: getMapStyle(mapStyles, mapStyleIndex),
+        // style: getMapStyle(mapStyles, mapStyleIndex),
+        style: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
         center: [lng, lat],
         zoom: zoom,
         antialias: true,
@@ -245,6 +241,8 @@ const AnimationView = (props: AnimationViewProps) => {
         maplibreLogo: false,
         preserveDrawingBuffer: true,
       });
+
+
 
       tb.current = (window as any).tb = new Threebox(
         map.current,
@@ -261,6 +259,53 @@ const AnimationView = (props: AnimationViewProps) => {
       // map.current.addControl(frameControl);
 
       map.current.on('load', function () {
+
+
+
+        const mapx = map.current;
+
+        if (!mapx) return;
+
+        const size = 512;
+        const pulsingDot = {
+          width: size,
+          height: size,
+          data: new Uint8Array(size * size * 4) as any,
+          context: null as any,
+
+          onAdd: function () {
+            const canvas = document.createElement('canvas');
+            canvas.width = this.width;
+            canvas.height = this.height;
+            this.context = canvas.getContext('2d');
+          },
+
+          // Call once before every frame where the icon will be used.
+          render: function () {
+
+            this.data = water.getContext('2d')?.getImageData(
+              0,
+              0,
+              this.width,
+              this.height
+            ).data;
+
+
+            mapx.triggerRepaint();
+            // mapx.willReadFrequently = true;
+            // Return `true` to let the map know that the image was updated.
+            return true;
+          }
+        };
+
+
+        mapx.addImage('waterfiller', pulsingDot);
+        mapx.setPaintProperty('water', 'fill-pattern', 'waterfiller');
+
+        mapx.setPaintProperty('water', 'fill-opacity', 1);
+
+
+
         map.current?.addLayer(content3DLayer as any);
       });
 
@@ -398,9 +443,10 @@ const AnimationView = (props: AnimationViewProps) => {
   }, [travelArray, mapStyleIndex]);
 
   useEffect(() => {
-    map.current?.setStyle(getMapStyle(mapStyles, mapStyleIndex));
+    // map.current?.setStyle(getMapStyle(mapStyles, mapStyleIndex));
+    // map.current?.setStyle('https://basemaps.cartocdn.com/gl/positron-gl-style/style.json');
 
-    console.log(111);
+
   }, [mapStyleIndex]);
 
   useEffect(() => {

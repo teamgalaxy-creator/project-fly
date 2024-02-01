@@ -49,6 +49,7 @@
     "three": "0.131.0",
     "threebox-plugin": "2.2.2",
     "troika-three-text": "^0.42.0",
+    "threenew": "npm:three@^0.160.0",
     "ts-loader": "^9.4.4",
     "tz-lookup": "^6.1.25",
     "vanilla-jsoneditor": "^0.18.10",
