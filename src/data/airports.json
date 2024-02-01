@@ -1,0 +1,53 @@
+[
+    {
+      "value": "CDG",
+      "text": "Charles de Gaulle Airport",
+      "coordinates": [2.547778, 49.009724]
+    },
+    {
+      "value": "FRA",
+      "text": "Frankfurt Airport",
+      "coordinates": [8.5622, 50.0379]
+    },
+    {
+      "value": "LHR",
+      "text": "Heathrow Airport",
+      "coordinates": [-0.4543, 51.47]
+    },
+    {
+      "value": "AMS",
+      "text": "Amsterdam Airport Schiphol",
+      "coordinates": [4.7639, 52.3086]
+    },
+    {
+      "value": "BCN",
+      "text": "Barcelona–El Prat Airport",
+      "coordinates": [2.0785, 41.297]
+    },
+    {
+      "value": "MAD",
+      "text": "Adolfo Suárez Madrid–Barajas Airport",
+      "coordinates": [-3.5672, 40.494]
+    },
+    {
+      "value": "FCO",
+      "text": "Leonardo da Vinci–Fiumicino Airport",
+      "coordinates": [12.2389, 41.8003]
+    },
+    {
+      "value": "ATH",
+      "text": "Athens International Airport",
+      "coordinates": [23.9445, 37.9364]
+    },
+    {
+      "value": "CPH",
+      "text": "Copenhagen Airport",
+      "coordinates": [12.6497, 55.6296]
+    },
+    {
+      "value": "ZRH",
+      "text": "Zurich Airport",
+      "coordinates": [8.5618, 47.4502]
+    }
+  ]
+  

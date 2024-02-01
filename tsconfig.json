@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext", "es2015", "es2016"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "baseUrl": "./src",
+    "paths": {
+      "~/*": ["./*"],
+      "~components/*": ["./components/*"],
+      "~redux/*": ["./redux/*"],
+      "~models": ["./utility/models"],
+      "~utility/*": ["./utility/*"],
+      "~styles/*": ["./styles/*"],
+      "~data/*": ["./data/*"],
+      "~containers/*": ["./containers/*"],
+      "~animation_engine/*": ["./animation_engine/*"]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "src/custom_declarations/threebox-plugin.d.ts",
+    "src/containers/FormContainer/styles.ts"
+  ],
+  "exclude": ["node_modules"]
+}

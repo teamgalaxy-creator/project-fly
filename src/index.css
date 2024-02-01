@@ -1,0 +1,118 @@
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+  background-color: #f5f6f6 !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  /* -webkit-font-smoothing: antialiased; */
+  /* -moz-osx-font-smoothing: grayscale; */
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+@font-face {
+  font-family: 'Futura'; /*Can be any text*/
+  src: local('Futur'), url('./fonts/futura/futur.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Futura Bold'; /*Can be any text*/
+  src: local('Futura Bold font'),
+    url('./fonts/futura/Futura Bold font.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Futura Bold Italic'; /*Can be any text*/
+  src: local('Futura Bold Italic font'),
+    url('./fonts/futura/Futura Bold Italic font.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Futura Md BT'; /*Can be any text*/
+  src: local('futura medium bt'),
+    url('./fonts/futura/futura medium bt.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Futura Book'; /*Can be any text*/
+  src: local('Futura Bk Book'),
+    url('./fonts/futura/Futura Bk Book.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Futura Bk'; /*Can be any text*/
+  src: local('Futura Bk Book'),
+    url('./fonts/futura/Futura Bk Book.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Futura Bk Book'; /*Can be any text*/
+  src: local('Futura Book font'),
+    url('./fonts/futura/Futura Book font.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Futura Book Italic'; /*Can be any text*/
+  src: local('Futura Book Italic font'),
+    url('./fonts/futura/Futura Book Italic font.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Futura Bk BT'; /*Can be any text*/
+  src: local('FuturaBookBT'),
+    url('./fonts/futura/FuturaBookBT.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Futura Extra Black'; /*Can be any text*/
+  src: local('Futura Extra Black font'),
+    url('./fonts/futura/Futura Extra Black font.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Futura Heavy'; /*Can be any text*/
+  src: local('Futura Heavy font'),
+    url('./fonts/futura/Futura Heavy font.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Futura Heavy Italic'; /*Can be any text*/
+  src: local('Futura Heavy Italic font'),
+    url('./fonts/futura/Futura Heavy Italic font.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Futura Medium'; /*Can be any text*/
+  src: local('futura medium bt'),
+    url('./fonts/futura/futura medium bt.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Figtree'; /*Can be any text*/
+  src: local('figtree'), url('./fonts/futura/figtree.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Futura Std'; /*Can be any text*/
+  src: local('FuturaStdHeavy'),
+    url('./fonts/futura/FuturaStdHeavy.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Futura Hv BT'; /*Can be any text*/
+  src: local('Futura Hv BT Heavy'),
+    url('./fonts/futura/Futura Hv BT Heavy.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Futura-Bold'; /*Can be any text*/
+  src: local('Futura-Bold'),
+    url('./fonts/futura/Futura-Bold.ttf') format('truetype');
+}

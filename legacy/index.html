@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Animate a point along a route</title>
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/maplibre-gl@3.3.0/dist/maplibre-gl.css"
+    />
+    <script src="https://unpkg.com/maplibre-gl@3.3.0/dist/maplibre-gl.js"></script>
+    <script src="https://unpkg.com/three@0.126.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.126.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/gh/jscastro76/threebox@v.2.2.2/dist/threebox.min.js"
+      type="text/javascript"
+    ></script>
+    <link
+      href="https://cdn.jsdelivr.net/gh/jscastro76/threebox@v.2.2.2/dist/threebox.css"
+      rel="stylesheet"
+    />
+    <script src="THREE.MeshLine.js"></script>
+    <script src="easing.js"></script>
+    <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+      }
+    </style>
+    <style>
+      .overlay {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+      }
+
+      .overlay button {
+        font: 600 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+        background-color: #3386c0;
+        color: #fff;
+        display: inline-block;
+        margin: 0;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+        border-radius: 3px;
+      }
+
+      .overlay button:hover {
+        background-color: #4ea0da;
+      }
+
+      .overlay button:disabled {
+        background: #f5f5f5;
+        color: #c3c3c3;
+      }
+    </style>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+      }
+
+      .marker {
+        opacity: 0;
+        cursor: pointer;
+        animation: dropDownAnimation 0.2s forwards;
+      }
+
+      .custom-popup #popup {
+        background: rgba(0, 0, 0, 0.747);
+        box-shadow: none;
+        margin: 0 60% -35px;
+        opacity: 0.9;
+        color: white;
+        width: 80%;
+        padding: 10px;
+        transform: scaleX(0);
+        transform-origin: left center;
+        animation: popupshow 1s forwards;
+      }
+
+      .custom-popup #inin {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 5px;
+        background-color: #ab7e34; /* Set your desired color */
+        transform-origin: left center;
+        animation: popupshow 1.5s forwards;
+      }
+
+      @keyframes popupshow {
+        0% {
+          transform: scaleX(0);
+        }
+
+        100% {
+          transform: scaleX(1);
+        }
+      }
+
+      .custom-popup #name h1 {
+        font-family: 'Times New Roman', Times, serif;
+        font-size: 17px;
+        font-weight: 200;
+        width: 100%;
+        text-align: center;
+      }
+
+      .panel-container {
+        position: fixed;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 300px;
+        background-color: #f1f1f1;
+        overflow: hidden;
+        transition: width 0.3s ease-in-out;
+        z-index: 99999;
+      }
+
+      .panel-header {
+        background-color: #ddd;
+        padding: 10px;
+      }
+
+      .panel-toggle-btn {
+        font-size: 16px;
+        border: none;
+        background-color: transparent;
+        cursor: pointer;
+      }
+
+      .panel-content {
+        padding: 10px;
+        display: none;
+        font-family: 'Segoe UI';
+      }
+
+      .panel-container.collapsed {
+        width: 40px;
+      }
+
+      .panel-container.collapsed .panel-content {
+        display: none;
+      }
+
+      .animate-button {
+        display: inline-block;
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        text-decoration: none;
+        color: #fff;
+        background-color: #5d615d;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 15px;
+      }
+
+      .animate-button:hover {
+        background-color: #361917;
+      }
+
+      .animate-button:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2);
+      }
+      .animate-button:disabled {
+        background: #f5f5f5;
+        color: #c3c3c3;
+      }
+
+      .maplibregl-popup-anchor-bottom .maplibregl-popup-tip {
+        display: none;
+      }
+
+      /* .pop .up {
+                    width: 100%;
+                    margin: 0 60% -35px;
+                    background: rgba(0, 0, 0, 0.747);
+                    box-shadow: none;
+                    opacity: 0.9;
+                    color: white;
+                    font-family: "Times New Roman", Times, serif;
+                    font-size: 17px;
+                    transform: scaleX(0);
+                    transform-origin: left;
+                    transition: transform 1s ease-in-out;
+                  } */
+
+      .popup-icon {
+        width: 40px;
+      }
+
+      @keyframes dropDownAnimation {
+        0% {
+          opacity: 0;
+          margin-top: -5%;
+        }
+
+        100% {
+          opacity: 1;
+          margin-top: 0;
+        }
+      }
+
+      .custom-marker {
+        background: none;
+        box-shadow: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="panel-container">
+      <div class="panel-header">
+        <button class="panel-toggle-btn">&#9660;</button>
+      </div>
+      <div class="panel-content">
+        <p>Origin Airport:</p>
+        <select id="origin">
+          <!-- <option value="option1">Option 1</option>
+                <option value="option2">Option 2</option>
+                <option value="option3">Option 3</option> -->
+        </select>
+        <p>Destination Airport</p>
+        <select id="destination">
+          <!-- <option value="choice1">Choice 1</option>
+                <option value="choice2">Choice 2</option>
+                <option value="choice3">Choice 3</option> -->
+        </select>
+        <p>Path Config</p>
+        <p>Type:</p>
+        <select id="linetype">
+          <option value="simple">Simple</option>
+          <option value="dashed">Dashed</option>
+        </select>
+        <p id="animateButton">Animated:</p>
+        <select id="lineanimate">
+          <option value="1">Yes</option>
+          <option value="0">No</option>
+        </select>
+        <p></p>
+        <button class="animate-button">Animate</button>
+      </div>
+    </div>
+    <!-- message display section  -->
+    <!-- <div id="message-container">
+      <div id="message">This is a message box</div>
+    </div> -->
+    <div id="map"></div>
+    <div class="overlay">
+      <button id="replay">Replay</button>
+    </div>
+  </body>
+</html>
+<script>
+  // Define the map syle (OpenStreetMap raster tiles)
+  const style = {
+    version: 8,
+    sources: {
+      osm: {
+        type: 'raster',
+        tiles: [
+          'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+        ],
+        tileSize: 256,
+        attribution: '&copy; OpenStreetMap Contributors',
+        maxzoom: 19,
+      },
+    },
+    layers: [
+      {
+        id: 'osm',
+        type: 'raster',
+        source: 'osm', // This must match the source key above
+      },
+    ],
+  };
+
+  // 'https://demotiles.maplibre.org/style.json'
+  const map = new maplibregl.Map({
+    container: 'map',
+    style: style, //"https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+    center: [48.98726016615262, 8.4024],
+    zoom: 8.078728596123335,
+    pitch: 32.81546456195577,
+    bearing: 47.5969941760701,
+    antialias: true,
+    hash: true,
+    maxZoom: 10,
+  });
+
+  // Add the navigation control
+  map.addControl(new maplibregl.NavigationControl(), 'bottom-left');
+
+  // eslint-disable-next-line no-undef
+  const tb = (window.tb = new Threebox(
+    map,
+    map.getCanvas().getContext('webgl'),
+    {
+      defaultLights: true,
+    },
+  ));
+
+  const replayButton = document.getElementById('replay');
+  replayButton.disabled = true;
+
+  let origin = [50.0379, 8.5622];
+  let destination = [48.486, 8.40456];
+  let originName = 'Starting airport';
+  let destinationName = 'destination airport';
+  let startMarker = null;
+  let startPopup = null;
+  let endMarker = null;
+  let destinationPopup = null;
+  let firstAnimation = true;
+  // A single point that animates along the route.
+  // Coordinates are initially set to origin.
+
+  const point = {
+    type: 'FeatureCollection',
+    features: [
+      {
+        type: 'Feature',
+        properties: {},
+        geometry: {
+          type: 'Point',
+          coordinates: origin,
+        },
+      },
+    ],
+  };
+
+  function openPopupWithDelay(marker, content, delay) {
+    // Adjust the position of the popup using CSS
+    const popup = new maplibregl.Popup({ closeButton: false });
+
+    setTimeout(function () {
+      // Create a new popup
+
+      // Attach the popup to the marker
+      marker.setPopup(popup);
+
+      // Simulate the typing text animation effect
+      var typedText = '';
+      var index = 0;
+      var interval = setInterval(function () {
+        if (index < content.length) {
+          typedText += content.charAt(index);
+          popup.setHTML(typedText);
+          index++;
+        } else {
+          clearInterval(interval);
+        }
+        popup.addTo(map);
+      }, 50); // Adjust the interval to control the typing speed
+    }, delay);
+
+    const autoCloseDelay = 5000; // 5000 milliseconds (5 seconds)
+    setTimeout(() => {
+      popup.remove(); // Close the popup
+    }, autoCloseDelay);
+  }
+
+  function populateDropdown(options, dropdown) {
+    for (var i = 0; i < options.length; i++) {
+      var option = document.createElement('option');
+      option.value = options[i].value;
+      option.text = options[i].text;
+      dropdown.appendChild(option);
+    }
+  }
+
+  function getSelectedAirportName(dropdown) {
+    const selectedValue = dropdown.value;
+    // (dropdown.value);
+    // Find the selected option in the airports array
+    const selectedAirport = airports.find(
+      (airport) => airport.value === selectedValue,
+    );
+
+    // If a selected airport is found, return its coordinates
+    if (selectedAirport) {
+      return selectedAirport.text;
+    } else {
+      return null; // Return null if no valid selection is made
+    }
+  }
+
+  function getSelectedCoordinates(dropdown) {
+    const selectedValue = dropdown.value;
+    // Find the selected option in the airports array
+    const selectedAirport = airports.find(
+      (airport) => airport.value === selectedValue,
+    );
+
+    // If a selected airport is found, return its coordinates
+    if (selectedAirport) {
+      return selectedAirport.coordinates;
+    } else {
+      return null; // Return null if no valid selection is made
+    }
+  }
+
+  const animationControls = {
+    start: 0,
+    end: 0,
+    pathCurve: [],
+    duration: 0,
+    callBack: null,
+    expired: true,
+  };
+
+  let linePointsForAnimatedMode = [];
+  let shouldAnimateLine = 0;
+  const animate = () => {
+    const now = Date.now();
+    if (!animationControls.expired) {
+      if (now <= animationControls.expiration) {
+        let timeProgress =
+          (now - animationControls.start) / animationControls.duration;
+        timeProgress = EasingFunctions.easeInOutCubic(timeProgress);
+        let position = animationControls.pathCurve.getPointAt(timeProgress);
+        plane.position.set(position.x, position.y, position.z);
+
+        // Calculate the dynamic icon size based on timeProgress
+        const minIconSize = 0; // Minimum size
+        const maxIconSize = 1; // Maximum size
+        let currentIconSize;
+
+        if (timeProgress <= 0.5) {
+          // Decrease size during the first half
+          currentIconSize =
+            minIconSize + (maxIconSize - minIconSize) * (2 * timeProgress);
+        } else {
+          // Increase size during the second half
+          currentIconSize =
+            maxIconSize -
+            (maxIconSize - minIconSize) * (2 * (timeProgress - 0.5));
+        }
+
+        let tpForNextPoint =
+          timeProgress + 0.00001 > 1 ? timeProgress : timeProgress + 0.00001;
+        let nextPosition =
+          animationControls.pathCurve.getPointAt(tpForNextPoint);
+        const worldPos = line.localToWorld(nextPosition);
+        plane.lookAt(worldPos);
+        map.repaint = true;
+
+        if (shouldAnimateLine === '1') {
+          linePointsForAnimatedMode.push(position.x, position.y, position.z);
+          lineGeometry.setAttribute(
+            'position',
+            new THREE.Float32BufferAttribute(linePointsForAnimatedMode, 3),
+          );
+          lineMesh.setGeometry(lineGeometry);
+
+          // A simple line from origin to destination
+          //I want this line to animate as well like the other arc for the 3d model animates in the case animate === 1
+          const planeLngLatPos = tb.unprojectFromWorld(plane.position);
+          // ("coodinates", planeLngLatPos);
+
+          const route = {
+            type: 'FeatureCollection',
+            features: [
+              {
+                type: 'Feature',
+                geometry: {
+                  type: 'LineString',
+                  coordinates: [origin, planeLngLatPos],
+                },
+              },
+            ],
+          };
+
+          const twoDPoint = {
+            type: 'FeatureCollection',
+            features: [
+              {
+                type: 'Feature',
+                properties: {},
+                geometry: {
+                  type: 'Point',
+                  coordinates: planeLngLatPos,
+                },
+              },
+            ],
+          };
+
+          twoDPoint.features[0].properties.bearing = turf.bearing(
+            turf.point(origin),
+            turf.point(planeLngLatPos),
+          );
+          map.setLayoutProperty('point', 'icon-size', currentIconSize);
+
+          map.getSource('pointSource').setData(twoDPoint);
+          map.getSource('route').setData(route);
+        }
+      } else {
+        // (plane.position);
+        animationControls.expired = true;
+
+        if (animationControls.callBack) animationControls.callBack();
+      }
+    }
+
+    requestAnimationFrame(animate);
+  };
+  animate();
+
+  const startAnimation = (
+    startMarker,
+    startPopup,
+    endMarker,
+    destinationPopup,
+    el,
+  ) => {
+    firstAnimation = false;
+    map.flyTo({
+      center: origin, // Fly to the selected target
+      bearing: 0,
+      pitch: 0,
+      zoom: 4,
+      duration: 500, // Animate over 12 seconds
+      essential: true, // This animation is considered essential with
+      //respect to prefers-reduced-motion
+    });
+
+    startMarker.addTo(map);
+    startPopup.addTo(map);
+
+    plane.visible = true;
+    let position = animationControls.pathCurve.getPointAt(0);
+    plane.position.set(position.x, position.y, position.z);
+
+    let nextPosition = animationControls.pathCurve.getPointAt(1);
+    line.updateMatrixWorld();
+    const worldPos = line.localToWorld(nextPosition);
+    plane.lookAt(worldPos);
+
+    setTimeout(() => {
+      linePointsForAnimatedMode = [];
+      animationControls.start = Date.now();
+      animationControls.expiration = Date.now() + animationControls.duration;
+      // animationControls.duration = duration;
+      animationControls.expired = false;
+      animationControls.callBack = () => {
+        document.querySelector('.animate-button').disabled = false;
+        replayButton.disabled = false;
+        setTimeout(() => {
+          plane.visible = false;
+        });
+
+        endMarker.addTo(map);
+        destinationPopup.addTo(map);
+        // destinationPopup.addClassName("open-popup");
+        // destinationPopup.addClassName("open-bar");
+      };
+
+      // Perform the map flyTo animation with easing and fractional part adjustment
+      map.flyTo({
+        center: destination,
+        essential: true,
+        zoom: 4,
+
+        easing: EasingFunctions.easeInOutCubic,
+        // animate: true,
+        // freezeElevation: true,
+        // offset: 10,
+        duration: animationControls.duration,
+        // step: () => {
+        //   storeFractionalPart();
+        // },
+      });
+    }, 1000);
+  };
+
+  const animateButton = document.querySelector('.animate-button');
+  animateButton.addEventListener('click', function () {
+    const originCoordinates = getSelectedCoordinates(originDropdown);
+    const destinationCoordinates = getSelectedCoordinates(destinationDropdown);
+    const originText = getSelectedAirportName(originDropdown);
+    const destinationText = getSelectedAirportName(destinationDropdown);
+    const lineType = lineTypeDropdown.value;
+    shouldAnimateLine = lineAnimateDropdown.value;
+
+    if (originCoordinates && destinationCoordinates) {
+      origin = originCoordinates;
+      destination = destinationCoordinates;
+      originName = originText;
+      destinationName = destinationText;
+
+      const [arc2d, arc3d, lineDistance] = generateArc(
+        originCoordinates,
+        destinationCoordinates,
+      );
+
+      if (map.getLayer('custom_layer')) {
+        map.removeLayer('custom_layer');
+        if (line) tb.remove(line);
+      }
+      map.addLayer({
+        id: 'custom_layer',
+        type: 'custom',
+        renderingMode: '3d',
+        onAdd: function (map, mbxContext) {
+          lineGeometry = new THREE.BufferGeometry();
+          const points = [];
+          const pointsVec3 = [];
+          for (let i = 0; i < arc3d.length; i++) {
+            const dest = tb.projectToWorld(arc3d[i]);
+            if (shouldAnimateLine === '0') points.push(dest.x, dest.y, dest.z);
+            pointsVec3.push(new THREE.Vector3(dest.x, dest.y, dest.z));
+          }
+          animationControls.pathCurve = new THREE.CatmullRomCurve3(pointsVec3);
+
+          lineGeometry.setAttribute(
+            'position',
+            new THREE.Float32BufferAttribute(points, 3),
+          );
+
+          // const lineMaterial = new THREE.LineDashedMaterial( {
+          //     color: 0x000000,
+          //     linewidth: 5,
+          //     scale: 10,
+          //     dashSize: 300,
+          //     gapSize: 400,
+          // } );
+          // // lineMaterial.resolution.set( window.innerWidth, window.innerHeight ); // resolution of the viewport
+          // line = new THREE.Line( lineGeometry, lineMaterial );
+          // line.computeLineDistances()
+
+          lineMesh = new MeshLine();
+          lineMesh.setGeometry(lineGeometry);
+          const material = new MeshLineMaterial({
+            color: 0x778899,
+            dashArray: lineType === 'dashed' ? 0.05 : 0,
+            lineWidth: 3,
+            transparent: true,
+            resolution: new THREE.Vector2(
+              window.innerWidth,
+              window.innerHeight,
+            ),
+          });
+          line = new THREE.Mesh(lineMesh, material);
+          tb.add(line);
+
+          animationControls.duration = lineDistance * 10;
+
+          if (!firstAnimation) {
+            startMarker.remove();
+            startPopup.remove();
+            endMarker.remove();
+            destinationPopup.remove();
+          }
+
+          const startName = `<h1>${originName}</h1>`;
+          const originPopup = `
+    <div id='popup'>
+      <div id='name'>${startName}</div>
+      <div id='inin'></div>
+    </div>
+`;
+
+          const startPopupElement = document.createElement('div');
+          startPopupElement.innerHTML = originPopup;
+          startPopupElement.classList.add('custom-popup');
+
+          startPopup = new maplibregl.Marker({
+            element: startPopupElement,
+          }).setLngLat(origin);
+
+          startMarker = new maplibregl.Marker({
+            className: 'marker',
+            color: '#ff0000',
+          }).setLngLat(origin);
+
+          const destName = `<h1>${destinationName}</h1>`;
+          const destPopup = `
+    <div id='popup'>
+      <div id='name'>${destName}</div>
+      <div id='inin'></div>
+    </div>
+`;
+          const destPopupElement = document.createElement('div');
+          destPopupElement.innerHTML = destPopup;
+          destPopupElement.classList.add('custom-popup');
+
+          destinationPopup = new maplibregl.Marker({
+            element: destPopupElement,
+          }).setLngLat(destination);
+
+          endMarker = new maplibregl.Marker({
+            className: 'marker',
+            color: '#ff0000',
+          }).setLngLat(destination);
+
+          if (origin !== destination) {
+            animateButton.disabled = true;
+            startAnimation(
+              startMarker,
+              startPopup,
+              endMarker,
+              destinationPopup,
+            );
+          } else {
+            startAnimation(
+              startMarker,
+              startPopup,
+              endMarker,
+              destinationPopup,
+            );
+          }
+        },
+
+        render: function (gl, matrix) {
+          tb.update();
+        },
+      });
+
+      // // A simple line from origin to destination.
+      // const route = {
+      // 'type': 'FeatureCollection',
+      // 'features': [
+      //   {
+      //     'type': 'Feature',
+      //     'geometry': {
+      //       'type': 'LineString',
+      //       'coordinates': [originCoordinates, destinationCoordinates]
+      //     }
+      //   }
+      // ]
+      // };
+      // map.getSource('route').setData(route);
+
+      map.addLayer({
+        id: 'route',
+        source: 'route',
+        type: 'line',
+        paint: {
+          'line-width': 1,
+          'line-color': '#36454F',
+          'line-dasharray': [4, 4],
+        },
+      });
+
+      document.getElementById('replay').disabled = false;
+    } else {
+      // ("Please select valid origin and destination.");
+    }
+  });
+
+  //Collapsible panel on the left
+  var panelToggleBtn = document.querySelector('.panel-toggle-btn');
+  var panelContent = document.querySelector('.panel-content');
+  var panelContainer = document.querySelector('.panel-container');
+
+  panelToggleBtn.addEventListener('click', function () {
+    panelContainer.classList.toggle('collapsed');
+    panelToggleBtn.textContent = panelContainer.classList.contains('collapsed')
+      ? '\u25C0'
+      : '\u25B6';
+    panelContent.style.display = panelContainer.classList.contains('collapsed')
+      ? 'none'
+      : 'block';
+  });
+  panelContainer.classList.toggle('collapsed');
+  panelToggleBtn.textContent = panelContainer.classList.contains('collapsed')
+    ? '\u25C0'
+    : '\u25B6';
+
+  var airports = [
+    {
+      value: 'CDG',
+      text: 'Charles de Gaulle Airport',
+      coordinates: [2.547778, 49.009724],
+    },
+    {
+      value: 'FRA',
+      text: 'Frankfurt Airport',
+      coordinates: [8.5622, 50.0379],
+    },
+    {
+      value: 'LHR',
+      text: 'Heathrow Airport',
+      coordinates: [-0.4543, 51.47],
+    },
+    {
+      value: 'AMS',
+      text: 'Amsterdam Airport Schiphol',
+      coordinates: [4.7639, 52.3086],
+    },
+    {
+      value: 'BCN',
+      text: 'Barcelona–El Prat Airport',
+      coordinates: [2.0785, 41.297],
+    },
+    {
+      value: 'MAD',
+      text: 'Adolfo Suárez Madrid–Barajas Airport',
+      coordinates: [-3.5672, 40.494],
+    },
+    {
+      value: 'FCO',
+      text: 'Leonardo da Vinci–Fiumicino Airport',
+      coordinates: [12.2389, 41.8003],
+    },
+    {
+      value: 'ATH',
+      text: 'Athens International Airport',
+      coordinates: [23.9445, 37.9364],
+    },
+    {
+      value: 'CPH',
+      text: 'Copenhagen Airport',
+      coordinates: [12.6497, 55.6296],
+    },
+    {
+      value: 'ZRH',
+      text: 'Zurich Airport',
+      coordinates: [8.5618, 47.4502],
+    },
+  ];
+
+  var originDropdown = document.getElementById('origin');
+  var destinationDropdown = document.getElementById('destination');
+  var lineTypeDropdown = document.getElementById('linetype');
+  var lineAnimateDropdown = document.getElementById('lineanimate');
+
+  // Corrected order of arguments
+  populateDropdown(airports, originDropdown);
+  populateDropdown(airports, destinationDropdown);
+
+  function generateArc(start, end, segments = 500) {
+    // const distance = turf.distance(start, end, { units: 'miles' });
+    // const midpoint = turf.midpoint(start, end);
+    // // const destination = turf.destination(midpoint, distance / 5, 20, { units: 'miles' });
+
+    // const bearing = turf.bearing(start, end);
+    // const leftSideArc = bearing + 90 > 180 ? -180 + (bearing + 90 - 180) : bearing + 90;
+    // const destination = turf.destination(midpoint, distance / 5, leftSideArc, { units: 'miles' });
+    // // curvedLine gets rendered to the page
+    // const curvedLine = turf.bezierSpline(
+    // turf.lineString([start, destination.geometry.coordinates, end]),
+    // );
+    // (curvedLine.geometry.coordinates)
+
+    const route = {
+      type: 'FeatureCollection',
+      features: [
+        {
+          type: 'Feature',
+          geometry: {
+            type: 'LineString',
+            coordinates: [start, end],
+          },
+        },
+      ],
+    };
+    route;
+
+    const lineDistance = turf.length(route.features[0]);
+    // ("distance:", lineDistance);
+    const steps = segments;
+    const arc = [];
+    // Draw an arc between the `origin` & `destination` of the two points
+    for (let i = 0; i < lineDistance; i += lineDistance / steps) {
+      const segment = turf.along(route.features[0], i);
+      arc.push(segment.geometry.coordinates);
+    }
+
+    // The easeInOutQuad() function
+    function easeInOutQuad(t, b, c, d) {
+      if ((t /= d / 2) < 1) return (c / 2) * t * t + b;
+      return (-c / 2) * (--t * (t - 2) - 1) + b;
+    }
+
+    // const customEasing = (t, b, c, d) => {
+    //   const firstease = easeInOutQuad(t, b, c, d);
+    //   ('first ease:', firstease);
+    //   const easedValue = THREE.MathUtils.lerp(0, 1, easeInOutQuad(t, b, c, d));
+    //   ('second ease:', easedValue);
+    //   return THREE.MathUtils.lerp(b, c, easedValue);
+    // };
+
+    let arc2d = arc; //curvedLine.geometry.coordinates
+    let arc3d = [];
+    let maxZ = 200 * lineDistance;
+    const size = arc2d.length / 2;
+    arc2d.length;
+    for (let index = 0; index < arc2d.length / 2; index++) {
+      const coord = arc2d[index];
+      const easedValue = easeInOutQuad(index, 0, maxZ, size);
+
+      arc3d.push([coord[0], coord[1], easedValue]);
+    }
+
+    let reverseIndex = 1;
+    for (
+      let index = Math.floor(arc2d.length / 2);
+      index < arc2d.length;
+      index++
+    ) {
+      const coord = arc2d[index];
+      const easedValue = arc3d[Math.floor(arc2d.length / 2) - reverseIndex];
+      if (easedValue) arc3d.push([coord[0], coord[1], easedValue[2]]);
+
+      reverseIndex += 1;
+    }
+
+    return [arc2d, arc3d, lineDistance];
+  }
+
+  // Used to increment the value of the point measurement against the route.
+  let counter = 0;
+  const scale = 1300;
+
+  let plane;
+  let lineMesh, lineGeometry, line;
+
+  map.on('load', () => {
+    map.addLayer({
+      id: 'custom-threebox-model',
+      type: 'custom',
+      renderingMode: '3d',
+      onAdd: function () {
+        // Creative Commons License attribution:  Metlife Building model by https://sketchfab.com/NanoRay
+        // https://sketchfab.com/3d-models/metlife-building-32d3a4a1810a4d64abb9547bb661f7f3
+        const options = {
+          obj: './plane4.glb',
+          type: 'gltf',
+          scale: { x: scale, y: scale, z: scale },
+          anchor: 'center',
+          // units: 'meters',
+          //   rotation: { x: 90, y: 180, z: 0 },
+        };
+
+        tb.loadObj(options, (model) => {
+          const start = tb.projectToWorld(origin);
+          const end = tb.projectToWorld(destination);
+
+          model.position.set(start.x, start.y, start.z);
+          // model.castShadow = true;
+
+          tb.add(model);
+
+          // model.rotateX((Math.PI / 2));
+          model.up.set(0, 0, 1);
+          // tbMesh.getWorldPosition(lookatVec3);
+          // model.lookAt(end);
+          plane = model;
+        });
+      },
+
+      render: function () {
+        // let date = new Date();//new Date(2020, 7, 14, 0, 39);
+        // tb.setSunlight(date, origin); //set Sun light for the given datetime and lnglat
+        tb.update();
+      },
+    });
+
+    map.addSource('pointSource', {
+      type: 'geojson',
+      data: {
+        type: 'FeatureCollection',
+        features: [
+          {
+            type: 'Feature',
+            properties: {},
+            geometry: {
+              type: 'Point',
+              coordinates: origin,
+            },
+          },
+        ],
+      },
+    });
+    map.addSource('route', {
+      type: 'geojson',
+      data: {
+        type: 'FeatureCollection',
+        features: [
+          {
+            type: 'Feature',
+            geometry: {
+              type: 'LineString',
+              coordinates: [],
+            },
+          },
+        ],
+      },
+    });
+
+    // map.addLayer({
+    //   id: "pointt",
+    //   source: "pointSource",
+    //   type: "symbol",
+    //   layout: {
+    //     // This icon is a part of the Mapbox Streets style.
+    //     // To view all images available in a Mapbox style, open
+    //     // the style in Mapbox Studio and click the "Images" tab.
+    //     // To add a new image to the style at runtime see
+    //     // https://docs.mapbox.com/mapbox-gl-js/example/add-image/
+    //     "icon-image": "plane2d.png",
+    //     "icon-size": 20,
+    //     "icon-rotate": ["get", "bearing"],
+    //     "icon-rotation-alignment": "map",
+    //     "icon-allow-overlap": true,
+    //     "icon-ignore-placement": true,
+    //   },
+    // });
+
+    map.loadImage('2dplane.png', (error, image) => {
+      if (error) throw error;
+
+      // Add the loaded image to the map's images
+      map.addImage('custom-icon', image);
+
+      // Now you can use 'custom-icon' as the icon name in the layer
+      map.addLayer({
+        id: 'point',
+        source: 'pointSource',
+        type: 'symbol',
+        layout: {
+          'icon-image': 'custom-icon', // Use the image name
+          'icon-size': 0.5,
+          'icon-rotate': ['get', 'bearing'],
+          'icon-rotation-alignment': 'map',
+          'icon-allow-overlap': true,
+          'icon-ignore-placement': true,
+        },
+      });
+    });
+
+    let points = [];
+    document.getElementById('replay').addEventListener('click', () => {
+      if (!firstAnimation) {
+        startMarker.remove();
+        startPopup.remove();
+        endMarker.remove();
+        destinationPopup.remove();
+      }
+
+      const startName = `<h1>${originName}</h1>`;
+      const originPopup = `
+    <div id='popup'>
+      <div id='name'>${startName}</div>
+      <div id='inin'></div>
+    </div>
+`;
+
+      const startPopupElement = document.createElement('div');
+      startPopupElement.innerHTML = originPopup;
+      startPopupElement.classList.add('custom-popup');
+
+      startPopup = new maplibregl.Marker({
+        element: startPopupElement,
+      }).setLngLat(origin);
+
+      startMarker = new maplibregl.Marker({
+        className: 'marker',
+        color: '#ff0000',
+      }).setLngLat(origin);
+
+      const destName = `<h1>${destinationName}</h1>`;
+      const destPopup = `
+    <div id='popup'>
+      <div id='name'>${destName}</div>
+      <div id='inin'></div>
+    </div>
+`;
+      const destPopupElement = document.createElement('div');
+      destPopupElement.innerHTML = destPopup;
+      destPopupElement.classList.add('custom-popup');
+
+      destinationPopup = new maplibregl.Marker({
+        element: destPopupElement,
+      }).setLngLat(destination);
+
+      endMarker = new maplibregl.Marker({
+        className: 'marker',
+        color: '#ff0000',
+      }).setLngLat(destination);
+
+      startAnimation(startMarker, startPopup, endMarker, destinationPopup);
+    });
+  });
+</script>
