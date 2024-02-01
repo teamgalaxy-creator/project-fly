@@ -66,7 +66,7 @@ const initialState: MapProps = {
   pointsArray: [],
   index: null,
   mapCustomizationPopupState: false,
-  mapStyleIndex: 0,
+  mapStyleIndex: 2,
   historyPageState: false,
   videoPopupState: false,
   videoLength: 1,
