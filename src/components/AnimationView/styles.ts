@@ -20,19 +20,19 @@ const useStyles = makeStyles((theme: typeof MuiTheme) => ({
     padding: '24px',
     overflowY: 'auto',
   },
-  watermark:{
-    width:'153px',
-    position:'absolute',
-    bottom:'10px',
-    left:'8px',
-    zIndex:'1',
+  watermark: {
+    width: '153px',
+    position: 'absolute',
+    bottom: '10px',
+    left: '8px',
+    zIndex: '1',
   },
-  watermarkFullscreen:{
-    width:'153px',
-    position:'absolute',
-    bottom:'10px',
-    left:'8px',
-    zIndex:'1',
+  watermarkFullscreen: {
+    width: '153px',
+    position: 'absolute',
+    bottom: '10px',
+    left: '8px',
+    zIndex: '1',
   },
   overlay: {
     position: 'absolute',
@@ -113,22 +113,22 @@ const useStyles = makeStyles((theme: typeof MuiTheme) => ({
 
   // Media query for screens with a max-width of 576px (small screens)
   [theme.breakpoints.between(350, 600)]: {
-    watermark:{
-      width:'79px',
-      position:'absolute',
-      bottom:'5px',
-      left:'3px',
-      zIndex:'1',
+    watermark: {
+      width: '79px',
+      position: 'absolute',
+      bottom: '5px',
+      left: '3px',
+      zIndex: '1',
     },
-    watermarkFullscreen:{
-      width:'103px',
-      position:'relative',
-      top:'47px',
-      left:'-30px',
-      zIndex:'1',
+    watermarkFullscreen: {
+      width: '103px',
+      position: 'relative',
+      top: '47px',
+      left: '-30px',
+      zIndex: '1',
       transform: 'rotate(90deg)',
     },
-    
+
   },
   [theme.breakpoints.between(300, 600)]: {
     mapContainer: {
@@ -169,23 +169,23 @@ const useStyles = makeStyles((theme: typeof MuiTheme) => ({
       justifyContent: 'center',
       alignItems: 'center',
       width: '100%',
-      height: '92dvh',
+      height: '100dvh',
     },
   },
   [theme.breakpoints.between(300, 350)]: {
-    watermark:{
-      width:'78px',
-      position:'absolute',
-      bottom:'5px',
-      left:'3px',
-      zIndex:'1',
+    watermark: {
+      width: '78px',
+      position: 'absolute',
+      bottom: '5px',
+      left: '3px',
+      zIndex: '1',
     },
-    watermarkFullscreen:{
-      width:'90px',
-      position:'relative',
-      top:'47px',
-      left:'-30px',
-      zIndex:'1',
+    watermarkFullscreen: {
+      width: '90px',
+      position: 'relative',
+      top: '47px',
+      left: '-30px',
+      zIndex: '1',
       transform: 'rotate(90deg)',
     },
   },
@@ -198,12 +198,12 @@ const useStyles = makeStyles((theme: typeof MuiTheme) => ({
       width: '100%',
       height: '50dvh',
     },
-    watermark:{
-      width:'78px',
-      position:'absolute',
-      bottom:'0px',
-      left:'3px',
-      zIndex:'1',
+    watermark: {
+      width: '78px',
+      position: 'absolute',
+      bottom: '0px',
+      left: '3px',
+      zIndex: '1',
     },
     // watermarkFullscreen:{
     //   width:'79px',
@@ -233,7 +233,7 @@ const useStyles = makeStyles((theme: typeof MuiTheme) => ({
       justifyContent: 'center',
       alignItems: 'center',
       width: '100%',
-      height: '92dvh',
+      height: '100dvh',
     },
   },
   [theme.breakpoints.down('sm')]: {

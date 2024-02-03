@@ -9,10 +9,6 @@ import { Alert, Slide, Snackbar } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import type MuiTheme from '~/styles/theme/MuiTheme';
 import { useSelector } from '~/redux/reducers';
-import CalenderView from './CalenderView';
-import GetStartedFooter from './GetStartedFooter';
-import { FaShare } from "react-icons/fa6";
-
 
 const useStyles = makeStyles((theme: typeof MuiTheme) => ({
 
@@ -104,17 +100,17 @@ export default function MainPageUi() {
   return (
     <>
       <Navbar />
-      {calenderView && <CalenderView />}
+
       <FeedbackPopup
         setOpenSnackbar={setOpenSnackbar}
         feedbackResult={feedbackResult}
         setFeedbackResult={setFeedbackResult}
       />
 
-      {travelArray.length > 0 ? <GetStartedFooter setCalenderView={setCalenderView} /> :
-        <FloatingActionButtons />
 
-      }
+      <FloatingActionButtons />
+
+
       <ControlsSpace />
       <AnimationView isVideoPopupMap={true} />
       {/* <VideoPopupContainer/> */}

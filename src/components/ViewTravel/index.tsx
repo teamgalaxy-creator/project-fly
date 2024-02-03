@@ -21,6 +21,8 @@ import { Loader } from '@googlemaps/js-api-loader';
 import { loadHDRI } from '~/utility/utils';
 import ActionsCreator from '~/redux/actions';
 import { useDispatch } from '~/redux/store';
+import MobileFooter from './MobileFooter';
+import MobileHeader from './MobileHeader';
 
 const getMapStyle = (styles: any, index: number) => {
   let style = styles[index].isURL
@@ -47,7 +49,7 @@ export default function ViewTravel() {
   const [carModelEnum, setcarModelEnum] = useState('');
   const [mapStyleIndex, setMapStyleIndex] = useState(null);
   const [travelLoader, setTravelLoader] = useState(true);
-
+  const [animationState, setAnimationState] = useState<any>({ state: 'idle' });
   const [fullscreenState, setFullScreenState] = useState<boolean>();
   const [fullScreenStateforIcon, setFullScreenStateforIcon] =
     useState<boolean>(false);
@@ -57,6 +59,7 @@ export default function ViewTravel() {
   const animationControllers = useRef<AnimationController[]>([]);
   const travelVisualizer = useRef<StaticTravelVisualizer>();
   const encodingRef = useRef<any>();
+  const [datax, setDatax] = useState<any>();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 600); // Detect initial screen width
   const isMounted = useRef(true);
   const dispatch = useDispatch();
@@ -113,6 +116,7 @@ export default function ViewTravel() {
     getTravelItinerary(tourID).then((data: any) => {
       setTravelLoader(false);
       if (isMounted.current) {
+        setDatax(data);
         setTravelPoints(data[0].travelPoints);
         setModelSize(data[0].model_size);
         setVideoLength(data[0].video_length);
@@ -136,6 +140,7 @@ export default function ViewTravel() {
       if (tb.current) tb.current.update();
       // animate();
       for (const obj in animationControllers.current) {
+
         (animationControllers.current[obj] as any).animate();
       }
 
@@ -247,6 +252,15 @@ export default function ViewTravel() {
     setLoading(newLoadingState);
   };
 
+  const handleAnimationState = (state: any) => {
+
+
+    setAnimationState((prev: any) => ({
+      ...prev,
+      ...state
+    }));
+  }
+
   useEffect(() => {
     if (playPauseState) {
       travelAnimation.current = new TravelAnimation(
@@ -262,6 +276,7 @@ export default function ViewTravel() {
         handleLoadingChange,
         isViewTravel,
         handleAnimationEnd,
+        handleAnimationState,
       );
 
       travelAnimation.current.setupAnimation();
@@ -294,13 +309,16 @@ export default function ViewTravel() {
   };
 
   async function setupGoogle() {
+
+
     const loader = new Loader({
       apiKey: process.env.REACT_APP_GOOGLE_API_KEY as string,
       version: 'weekly',
       authReferrerPolicy: 'origin',
-    });
+    })
 
-    encodingRef.current = await loader.importLibrary('geometry');
+
+    encodingRef.current = await loader.importLibrary('geometry').catch(console.error)
   }
 
   useEffect(() => {
@@ -387,6 +405,8 @@ export default function ViewTravel() {
   //   );
   // }
 
+  console.log("WHere map is now")
+
   return (
     <div>
       <div className={classes.mapsMainContainer} ref={mapContainer} />
@@ -419,9 +439,15 @@ export default function ViewTravel() {
         </Fab>
       )}
 
-      {travelPoints.length > 0 && (
+      <MobileHeader to={datax?.[0]?.travelPoints?.[1]?.arrival?.location?.city} />
+      <MobileFooter
+        step={animationState}
+        data={datax}
+      />
+
+      {/* {travelPoints.length > 0 && (
         <>{!playPauseState ? <VideoControls /> : null}</>
-      )}
+      )} */}
     </div>
   );
 }

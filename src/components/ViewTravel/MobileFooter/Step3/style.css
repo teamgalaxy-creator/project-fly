@@ -1,0 +1,40 @@
+.daydate {
+    flex: 1;
+    display: flex;
+
+    font-size: 3vh;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 5;
+    color: #fff;
+}
+
+.planeIconWrapper {
+
+
+    box-sizing: border-box;
+
+    padding: 5px;
+
+    background: linear-gradient(225deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.26) 100%);
+    /* Shadow-Blur/sm */
+    box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.05), 0px 4px 4px rgba(0, 0, 0, 0.05), 0px 10px 10px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    /* Note: backdrop-filter has minimal browser support */
+    border-radius: 10px;
+    border: 1.5px solid rgba(255, 255, 255, 0.5);
+
+
+
+
+}
+
+.toHeading {
+    font-size: large;
+    font-weight: bolder;
+}
+
+.dateHeading {
+    font-size: small;
+}

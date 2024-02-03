@@ -231,8 +231,7 @@ const AnimationView = (props: AnimationViewProps) => {
       map.current = new maplibregl.Map({
         container: mapContainer.current as HTMLElement,
         attributionControl: false,
-        // style: getMapStyle(mapStyles, mapStyleIndex),
-        style: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+        style: getMapStyle(mapStyles, mapStyleIndex),
         center: [lng, lat],
         zoom: zoom,
         antialias: true,
@@ -300,12 +299,15 @@ const AnimationView = (props: AnimationViewProps) => {
         };
 
 
-        mapx.addImage('waterfiller', pulsingDot);
-        mapx.setPaintProperty('water', 'fill-pattern', 'waterfiller');
+        // if mapx has a layer with the id 'water' then
+        if (mapx.getLayer('water')) {
 
-        mapx.setPaintProperty('water', 'fill-opacity', 1);
+          mapx.addImage('waterfiller', pulsingDot);
+          mapx.setPaintProperty('water', 'fill-pattern', 'waterfiller');
 
+          mapx.setPaintProperty('water', 'fill-opacity', 1);
 
+        }
 
         map.current?.addLayer(content3DLayer as any);
       });
@@ -326,14 +328,14 @@ const AnimationView = (props: AnimationViewProps) => {
       //   map.current.addControl(new maplibregl.FullscreenControl());
       // }
       if (props.isVideoPopupMap && !fullscreenMode) {
-        map.current.addControl(
-          new maplibregl.NavigationControl({
-            visualizePitch: true,
-            showZoom: true,
-            showCompass: false,
-          }),
-          'top-right',
-        );
+        // map.current.addControl(
+        //   new maplibregl.NavigationControl({
+        //     visualizePitch: true,
+        //     showZoom: true,
+        //     showCompass: false,
+        //   }),
+        //   'top-right',
+        // );
       }
     }
 
@@ -444,7 +446,7 @@ const AnimationView = (props: AnimationViewProps) => {
   }, [travelArray, mapStyleIndex]);
 
   useEffect(() => {
-    // map.current?.setStyle(getMapStyle(mapStyles, mapStyleIndex));
+    map.current?.setStyle(getMapStyle(mapStyles, mapStyleIndex));
     // map.current?.setStyle('https://basemaps.cartocdn.com/gl/positron-gl-style/style.json');
 
 
@@ -508,11 +510,6 @@ const AnimationView = (props: AnimationViewProps) => {
   return (
     <div className="body" style={{ position: 'relative' }} ref={htmlCanvas}>
 
-      <div style={{position: 'relative', zIndex: 999}}>
-        <div className="music-bottom" style={{position: 'absolute',top: 60, right: 100, cursor: 'pointer'}}>
-          <FaShare color="white" size={25} />
-        </div>
-      </div>
 
       {loading && (
         <div className={classes.loadingScreen}>

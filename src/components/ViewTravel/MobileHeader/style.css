@@ -1,0 +1,73 @@
+.mobile-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    overflow: hidden;
+    padding: 2vh 5vw 2vh 5vw;
+}
+
+.mobile-header-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5vh;
+    color: white;
+    font-size: 20px;
+    font-weight: 800 !important;
+}
+
+.music-player {
+
+    box-sizing: border-box;
+    justify-self: flex-end;
+    align-self: flex-end;
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 0px;
+    gap: 1vw;
+    isolation: isolate;
+
+    border-style: solid;
+    border-color: rgba(255, 255, 255, 0.295);
+    border-width: 0px 0px 1px 1px;
+
+    padding: 1vh 3vw 1vh 3vw;
+    left: calc(50% - 52px/2 - 137.58px);
+    top: 33.58px;
+
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.295) 100%);
+    backdrop-filter: blur(16.33px);
+    /* Note: backdrop-filter has minimal browser support */
+    border-radius: 24.32px;
+}
+
+.share-button {
+    display: flex;
+    justify-self: flex-end;
+    align-self: flex-end;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 0px;
+    gap: 13.33px;
+    isolation: isolate;
+    border-style: solid;
+    border-color: rgba(255, 255, 255, 0.295);
+    border-width: 0px 0px 1px 1px;
+    padding: 1vh 2vw 1vh 2vw;
+    left: calc(50% - 52px/2 - 137.58px);
+    top: 33.58px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.295) 100%);
+    backdrop-filter: blur(16.33px);
+    /* Note: backdrop-filter has minimal browser support */
+    border-radius: 24.32px;
+}

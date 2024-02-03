@@ -95,14 +95,16 @@ class AnimationController {
   distancesArr!: number[];
   vectorArray!: Vector3[];
   prevIndex: number = 0;
+  handleAnimationState: any;
 
-  constructor(map: Map, index: number, model: Object3D) {
+  constructor(map: Map, index: number, model: Object3D, handleAnimationState?: any) {
     if (!map) return;
     this.map = map;
     this.tb = (window as any).tb;
     this.index = index;
     if (model) this.model = model;
     this.pathGeometry = new BufferGeometry();
+    this.handleAnimationState = handleAnimationState;
   }
 
   updateModel(model: Object3D) {
@@ -170,22 +172,22 @@ class AnimationController {
     const obj =
       this.selectedTransport === 'Plane'
         ? generate3DArc(
-            this.origin,
-            this.destination,
-            this.arcHeight,
-            1000,
-            this.shouldAnimatePath,
-            this.tb,
-          )
+          this.origin,
+          this.destination,
+          this.arcHeight,
+          1000,
+          this.shouldAnimatePath,
+          this.tb,
+        )
         : this.selectedTransport === 'Car'
-        ? generate3DLine(
+          ? generate3DLine(
             lineData as Position[],
             animationConfig.arcHeightScale,
             this.selectedTransport,
             this.tb,
             this.shouldAnimatePath,
           )
-        : null;
+          : null;
 
     this.pathCurve = obj?.pathCurve as CatmullRomCurve3;
     this.material = obj?.material;
@@ -295,12 +297,21 @@ class AnimationController {
 
     const animateOrigin = async () => {
       console.log('animate origin');
+
       if (this.markerAnimations.length > 0) {
         // if (this.index === this.travelIndex || this.index === 0) {
         await this.markerAnimations[0].setup(showOriginMarker);
         console.log('marker 0 start');
+        // this.handleAnimationState({
+        //   type: 'origin',
+        //   state: 'start',
+        // });
         this.markerAnimations[0].playAnimation(this.selectedTransport, () => {
           console.log('marker 0 end');
+          // this.handleAnimationState({
+          //   type: 'destination',
+          //   state: 'end',
+          // });
           this.startPlaneAnimation();
         });
       }
@@ -359,7 +370,7 @@ class AnimationController {
         const runOnEndMarkerAnimations = async () => {
           if (this.markerAnimations.length > 0) {
             await this.markerAnimations[1].setup(true);
-            this.markerAnimations[0].removeTextAnimation(() => {});
+            this.markerAnimations[0].removeTextAnimation(() => { });
             this.markerAnimations[1].playAnimation(
               this.selectedTransport,
               () => {
@@ -378,7 +389,7 @@ class AnimationController {
         } else {
           if (this.markerAnimations.length > 0)
             console.log('CHECK WHY THIS ISNT WORKING');
-          this.markerAnimations[0].removeTextAnimation(() => {});
+          this.markerAnimations[0].removeTextAnimation(() => { });
           this.markerAnimations[1].playAnimation(this.selectedTransport, () => {
             this.markerAnimations[1]?.removeTextAnimation(() => {
               this.animationConfig.onCompleteCallback!();
@@ -576,7 +587,7 @@ class AnimationController {
             currentScale =
               maxScale -
               (maxScale - minScale) *
-                ((timeProgress - planeShrinkPrecentage) / planeGrowPrecentage);
+              ((timeProgress - planeShrinkPrecentage) / planeGrowPrecentage);
           }
           // Apply the calculated scale to this.model
           this.model.scale.set(currentScale, currentScale, currentScale);
@@ -585,7 +596,10 @@ class AnimationController {
         this.isAnimationExpired = true;
         if (this.onAnimationCompleteCallback)
           this.onAnimationCompleteCallback();
-        console.log('DONE');
+        // this.handleAnimationState({
+        //   type: 'origin',
+        //   state: 'end',
+        // })
       }
     }
 

@@ -6,7 +6,7 @@
 body {
   position: 'relative';
   width: '100%';
-  height: '100dvh';
+  height: '100vh';
 }
 
 .travelForm {
@@ -30,6 +30,7 @@ body {
   margin-top: 10px;
   background: lightgrey;
 }
+
 .subHeadings {
   margin-top: 10px;
 }
@@ -39,6 +40,7 @@ body {
   cursor: pointer;
   animation: dropDownAnimation 0.2s forwards;
 }
+
 /* styles.css or your preferred CSS file */
 .mapmobile-styles {
   margin-top: 0px;
@@ -232,18 +234,22 @@ body {
   animation: 2s anim-lineUp forwards;
   opacity: 0;
 }
+
 @keyframes anim-lineUp {
   0% {
     opacity: 0;
     transform: translateY(80%);
   }
+
   20% {
     opacity: 0;
   }
+
   50% {
     opacity: 1;
     transform: translateY(0%);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0%);

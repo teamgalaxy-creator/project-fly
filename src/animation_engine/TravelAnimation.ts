@@ -33,7 +33,7 @@ export class TravelAnimation {
   carModelEnum!: string;
   isViewTravel: boolean;
   callbackOnAnimationEnd: () => void;
-
+  handleAnimationState?: (state: any) => void;
   DEFAULT_ANIMATION_TOTAL_TIME = 15;
   showMarker: boolean = true;
 
@@ -50,6 +50,7 @@ export class TravelAnimation {
     handleLoadingChange: any,
     isViewTravel: boolean,
     callbackOnAnimationEnd: () => void,
+    handleAnimationState?: (state: any) => void,
   ) {
     this.travelArray = travelArray;
     this.map = map;
@@ -66,6 +67,7 @@ export class TravelAnimation {
     this.handleLoadingChange = handleLoadingChange;
     this.isViewTravel = isViewTravel;
     this.callbackOnAnimationEnd = callbackOnAnimationEnd;
+    this.handleAnimationState = handleAnimationState;
   }
 
   async setShowOriginMarker(currentIndex: number, currentData: number[][]) {
@@ -218,6 +220,11 @@ export class TravelAnimation {
     };
 
     const animateNextPoint = async () => {
+      this.handleAnimationState?.({
+        type: 'origin',
+        state: 'load',
+      });
+      console.log('Animating next point', currentIndex);
       currentPoint = this.travelArray[currentIndex];
       currentData = await pathDecoder(currentPoint);
 
@@ -352,8 +359,8 @@ export class TravelAnimation {
 
     try {
       const [modelRef, carModelRef] = await Promise.all([
-        this.loadModel(options, (progress) => {}),
-        this.loadModel(carOpt, (progress) => {}),
+        this.loadModel(options, (progress) => { }),
+        this.loadModel(carOpt, (progress) => { }),
       ]);
 
       this.modelRef = modelRef;
@@ -374,26 +381,32 @@ export class TravelAnimation {
         if (this.animationControllers.length === 0) {
           for (let i = 0; i < this.travelArray.length; i += 1) {
             if (this.travelArray[i].selectedTransport === 'Plane') {
+              // this.handleAnimationState?.({ model: this.travelArray[i].selectedTransport })
               this.animationControllers[i] = new AnimationController(
                 this.map as Map,
                 i,
                 this.modelRef as Object3D,
+                this.handleAnimationState,
               );
             } else if (this.travelArray[i].selectedTransport === 'Car') {
+              // this.handleAnimationState?.({ model: this.travelArray[i].selectedTransport })
               this.animationControllers[i] = new AnimationController(
                 this.map as Map,
                 i,
                 this.carModelRef as Object3D,
+                this.handleAnimationState,
               );
             }
           }
         } else {
           for (let i = 0; i < this.travelArray.length; i += 1) {
             if (this.travelArray[i].selectedTransport === 'Plane') {
+              // this.handleAnimationState?.({ model: this.travelArray[i].selectedTransport })
               this.animationControllers[i].updateModel(
                 this.modelRef as Object3D,
               );
             } else if (this.travelArray[i].selectedTransport === 'Car') {
+              // this.handleAnimationState?.({ model: this.travelArray[i].selectedTransport })
               this.animationControllers[i].updateModel(
                 this.carModelRef as Object3D,
               );
